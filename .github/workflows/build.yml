@@ -5,10 +5,12 @@ name: build
 on:
   push:
     branches: 
-      - master
+      - main
+  schedule:
+    - cron: '0 6 * * 0'
 
 env:
-  PLATFORM: "linux/amd64,linux/arm64/v8,linux/arm/v7"
+  PLATFORM: "linux/amd64,linux/arm64/v8"
   DEBIAN_VERSION: "bullseye"
   GO_VERSION: "1.18"
   KUBECTL_VERSION: "v1.24.1"
@@ -19,8 +21,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
       - name: Set up Docker Buildx
         id: buildx
@@ -28,41 +33,41 @@ jobs:
         with:
           version: latest
 
-      - name: login to docker hub
+      - name: Login to docker hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: build toolbox
-        run: >-
-          docker buildx build --push --target toolbox
-            --build-arg "DEBIAN_VERSION=$DEBIAN_VERSION"
-            --build-arg "GO_VERSION=$GO_VERSION"
-            --build-arg "KUBECTL_VERSION=$KUBECTL_VERSION"
-            --build-arg "PYTHON_VERSION=$PYTHON_VERSION"
-            --build-arg "ANSIBLE_VERSION=$ANSIBLE_VERSION"
-            --tag "${{ secrets.DOCKER_USERNAME }}/ci-toolbox:$DEBIAN_VERSION"
-            --platform "$PLATFORM" .
+      - name: Build toolbox
+        run: |
+          docker buildx build --target toolbox \
+            --build-arg DEBIAN_VERSION=$DEBIAN_VERSION \
+            --build-arg GO_VERSION=$GO_VERSION \
+            --build-arg KUBECTL_VERSION=$KUBECTL_VERSION \
+            --build-arg PYTHON_VERSION=$PYTHON_VERSION \
+            --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION \
+            --tag ${{ secrets.DOCKER_USERNAME }}/ci-toolbox:$DEBIAN_VERSION \
+            --platform $PLATFORM --output type=registry .
 
-      - name: build kubectl
-        run: >-
-          docker buildx build --push --target kubectl
-            --build-arg "DEBIAN_VERSION=$DEBIAN_VERSION"
-            --build-arg "GO_VERSION=$GO_VERSION"
-            --build-arg "KUBECTL_VERSION=$KUBECTL_VERSION"
-            --build-arg "PYTHON_VERSION=$PYTHON_VERSION"
-            --build-arg "ANSIBLE_VERSION=$ANSIBLE_VERSION"
-            --tag "${{ secrets.DOCKER_USERNAME }}/ci-kubectl:$KUBECTL_VERSION"
-            --platform "$PLATFORM" .
+      - name: Build kubectl
+        run: |
+          docker buildx build --target kubectl \
+            --build-arg DEBIAN_VERSION=$DEBIAN_VERSION \
+            --build-arg GO_VERSION=$GO_VERSION \
+            --build-arg KUBECTL_VERSION=$KUBECTL_VERSION \
+            --build-arg PYTHON_VERSION=$PYTHON_VERSION \
+            --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION \
+            --tag ${{ secrets.DOCKER_USERNAME }}/ci-kubectl:$KUBECTL_VERSION \
+            --platform $PLATFORM --output type=registry .
 
-      - name: build ansible
-        run: >-
-          docker buildx build --push --target ansible
-            --build-arg "DEBIAN_VERSION=$DEBIAN_VERSION"
-            --build-arg "GO_VERSION=$GO_VERSION"
-            --build-arg "KUBECTL_VERSION=$KUBECTL_VERSION"
-            --build-arg "PYTHON_VERSION=$PYTHON_VERSION"
-            --build-arg "ANSIBLE_VERSION=$ANSIBLE_VERSION"
-            --tag "${{ secrets.DOCKER_USERNAME }}/ci-ansible:$ANSIBLE_VERSION"
-            --platform "$PLATFORM" .
+      - name: Build ansible
+        run: |
+          docker buildx build --target ansible \
+            --build-arg DEBIAN_VERSION=$DEBIAN_VERSION \
+            --build-arg GO_VERSION=$GO_VERSION \
+            --build-arg KUBECTL_VERSION=$KUBECTL_VERSION \
+            --build-arg PYTHON_VERSION=$PYTHON_VERSION \
+            --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION \
+            --tag ${{ secrets.DOCKER_USERNAME }}/ci-ansible:$ANSIBLE_VERSION \
+            --platform $PLATFORM --output type=registry .
 
-      - name: unlogin to docker hub
+      - name: Unlogin to docker hub
         run: docker logout

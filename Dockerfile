@@ -15,6 +15,7 @@ RUN useradd --uid 1001 --user-group --no-create-home toolbox \
         curl \
         wget \
         wput \
+        openssh-client \
     && rm -rf "/var/lib/apt/lists/*"
 
 FROM toolbox-blank as toolbox
@@ -54,6 +55,15 @@ RUN useradd --uid 1001 --user-group --no-create-home ansible \
     && chown -R ansible:ansible /opt/workshop \
     && chmod -R "0700" /opt/workshop \
     && usermod --home /opt/workshop ansible \
+    && apt-get update \
+    && apt-get install -y \
+        git \
+        make \
+        curl \
+        wget \
+        wput \
+        openssh-client \
+    && rm -rf "/var/lib/apt/lists/*" \
     && python3 -m pip install --no-cache-dir --upgrade \
         ansible==${ANSIBLE_VERSION} \
         jmespath \
