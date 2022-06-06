@@ -7,7 +7,7 @@ on:
     branches: 
       - main
   schedule:
-    - cron: '0 6 * * 0'
+    - cron: '0 6 1 * *'
 
 env:
   PLATFORM: "linux/amd64,linux/arm64/v8"
