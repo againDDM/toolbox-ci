@@ -22,7 +22,6 @@ RUN apt-get update \
         curl \
         wget \
         wput \
-        make \
         openssh-client \
     && rm -rf "/var/lib/apt/lists/*"
 
