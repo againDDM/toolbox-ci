@@ -46,7 +46,8 @@ COPY --from=kubectl-builder /go/kubectl/cmd/kubectl/kubectl /usr/bin/kubectl
 USER toolbox
 
 FROM python:${PYTHON_VERSION}-slim-${DEBIAN_VERSION} as ansible
-ARG ANSIBLE_VERSION=5.8.0
+# pip index versions ansible
+ARG ANSIBLE_VERSION=5.9.0
 RUN useradd --uid 1001 --user-group --no-create-home ansible \
     && mkdir -p /opt/workshop/.ansible \
     && chown -R ansible:ansible /opt/workshop \

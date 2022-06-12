@@ -15,7 +15,7 @@ env:
   GO_VERSION: "1.18"
   KUBECTL_VERSION: "v1.24.1"
   PYTHON_VERSION: "3.10"
-  ANSIBLE_VERSION: "5.8.0"
+  ANSIBLE_VERSION: "5.9.0"
 
 jobs:
   build:
