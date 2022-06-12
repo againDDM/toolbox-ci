@@ -61,6 +61,7 @@ RUN useradd --uid 1001 --user-group --no-create-home ansible \
         wget \
         wput \
         openssh-client \
+        sshpass \
     && rm -rf "/var/lib/apt/lists/*"
 RUN python3 -m pip install --no-cache-dir --upgrade \
         ansible==${ANSIBLE_VERSION} \
