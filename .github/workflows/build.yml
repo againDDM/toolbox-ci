@@ -6,8 +6,8 @@ on:
   push:
     branches: 
       - main
-  schedule:
-    - cron: '0 6 1 * *'
+  # schedule:
+  #   - cron: '0 6 1 * *'
 
 env:
   PLATFORM: "linux/amd64,linux/arm64/v8"
@@ -19,6 +19,7 @@ env:
 
 jobs:
   build:
+    if: "!contains(github.event.commits[0].message, '[skip ci]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
