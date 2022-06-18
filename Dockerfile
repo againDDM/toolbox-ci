@@ -41,8 +41,26 @@ RUN git clone --single-branch --depth 1  \
     && go build -mod readonly -o kubectl \
     && chmod +x kubectl
 
-FROM base as kubectl
+FROM base as kubectl-blank
 COPY --from=kubectl-builder /go/kubectl/cmd/kubectl/kubectl /usr/bin/kubectl
+
+FROM kubectl-blank as kubectl
+USER toolbox
+
+FROM golang:${GO_VERSION}-${DEBIAN_VERSION} as helm-builder
+ARG HELM_VERSION="v3.9.0"
+ENV GOSUMDB="off" \
+    CGO_ENABLED=0
+RUN git clone --single-branch --depth 1  \
+        --branch ${HELM_VERSION} \
+        https://github.com/helm/helm.git \
+        /go/helm \
+    && cd /go/helm/cmd/helm/ \
+    && go build -mod readonly -o helm \
+    && chmod +x helm
+
+FROM kubectl-blank as helm
+COPY --from=helm-builder /go/helm/cmd/helm/helm /usr/bin/helm
 USER toolbox
 
 FROM python:${PYTHON_VERSION}-slim-${DEBIAN_VERSION} as ansible

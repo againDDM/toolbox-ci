@@ -13,9 +13,10 @@ env:
   PLATFORM: "linux/amd64,linux/arm64/v8"
   DEBIAN_VERSION: "bullseye"
   GO_VERSION: "1.18"
-  KUBECTL_VERSION: "v1.24.1"
+  KUBECTL_VERSION: "v1.24.2"
   PYTHON_VERSION: "3.10"
   ANSIBLE_VERSION: "5.9.0"
+  HELM_VERSION: "v3.9.0"
 
 jobs:
   build:
@@ -43,6 +44,7 @@ jobs:
             --build-arg DEBIAN_VERSION=$DEBIAN_VERSION \
             --build-arg GO_VERSION=$GO_VERSION \
             --build-arg KUBECTL_VERSION=$KUBECTL_VERSION \
+            --build-arg HELM_VERSION=$HELM_VERSION \
             --build-arg PYTHON_VERSION=$PYTHON_VERSION \
             --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION \
             --tag ${{ secrets.DOCKER_USERNAME }}/ci-toolbox:$DEBIAN_VERSION \
@@ -54,9 +56,22 @@ jobs:
             --build-arg DEBIAN_VERSION=$DEBIAN_VERSION \
             --build-arg GO_VERSION=$GO_VERSION \
             --build-arg KUBECTL_VERSION=$KUBECTL_VERSION \
+            --build-arg HELM_VERSION=$HELM_VERSION \
             --build-arg PYTHON_VERSION=$PYTHON_VERSION \
             --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION \
             --tag ${{ secrets.DOCKER_USERNAME }}/ci-kubectl:$KUBECTL_VERSION \
+            --platform $PLATFORM --output type=registry .
+
+      - name: Build helm
+        run: |
+          docker buildx build --target helm \
+            --build-arg DEBIAN_VERSION=$DEBIAN_VERSION \
+            --build-arg GO_VERSION=$GO_VERSION \
+            --build-arg KUBECTL_VERSION=$KUBECTL_VERSION \
+            --build-arg HELM_VERSION=$HELM_VERSION \
+            --build-arg PYTHON_VERSION=$PYTHON_VERSION \
+            --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION \
+            --tag ${{ secrets.DOCKER_USERNAME }}/ci-helm:$HELM_VERSION \
             --platform $PLATFORM --output type=registry .
 
       - name: Build ansible
@@ -65,6 +80,7 @@ jobs:
             --build-arg DEBIAN_VERSION=$DEBIAN_VERSION \
             --build-arg GO_VERSION=$GO_VERSION \
             --build-arg KUBECTL_VERSION=$KUBECTL_VERSION \
+            --build-arg HELM_VERSION=$HELM_VERSION \
             --build-arg PYTHON_VERSION=$PYTHON_VERSION \
             --build-arg ANSIBLE_VERSION=$ANSIBLE_VERSION \
             --tag ${{ secrets.DOCKER_USERNAME }}/ci-ansible:$ANSIBLE_VERSION \

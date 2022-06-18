@@ -7,5 +7,8 @@ toolbox is used to interact with remote repositories.
 ## kubectl
 kubectl is used to interact with the kubernetis clusters.
 
+## helm
+helm is used to interact with the kubernetis clusters.
+
 ## ansible
 ansible is used to configure systems and deploy software.
