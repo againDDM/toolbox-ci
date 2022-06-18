@@ -3,8 +3,6 @@ ARG PYTHON_VERSION=3.10
 ARG GO_VERSION=1.18
 
 FROM debian:${DEBIAN_VERSION}-slim as base
-ARG USER=toolbox
-ARG HOME=/opt/workshop
 RUN useradd --uid 1001 --user-group --no-create-home toolbox \
     && mkdir -p /opt/workshop/.ssh \
     && mkdir -p /opt/workshop/.kube \
