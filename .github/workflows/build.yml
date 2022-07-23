@@ -6,8 +6,8 @@ on:
   push:
     branches: 
       - main
-  # schedule:
-  #   - cron: '0 6 1 * *'
+  schedule:
+   - cron: '0 6 1 * *'
 
 env:
   PLATFORM: "linux/amd64,linux/arm64/v8"
@@ -15,8 +15,8 @@ env:
   GO_VERSION: "1.18"
   KUBECTL_VERSION: "v1.24.3"
   PYTHON_VERSION: "3.10"
-  ANSIBLE_VERSION: "6.0.0"
-  HELM_VERSION: "v3.9.1"
+  ANSIBLE_VERSION: "6.1.0"
+  HELM_VERSION: "v3.9.2"
 
 jobs:
   build:
